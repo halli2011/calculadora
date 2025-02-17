@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tabla de Amortización</title>
+</head>
+<body>
+    <h2>Formulario de Crédito</h2>
+    <form action="calculo.php" method="post">
+        <label for="cedula">Cédula del cliente:</label><br>
+        <input type="text" id="cedula" name="cedula"><br>
+        <label for="nombre">Nombre del cliente:</label><br>
+        <input type="text" id="nombre" name="nombre"><br>
+        <label for="monto">Monto del crédito:</label><br>
+        <input type="text" id="monto" name="monto"><br>
+        <label for="tasa">Tasa de interés mensual (%):</label><br>
+        <input type="text" id="tasa" name="tasa"><br>
+        <label for="plazo">Plazo en meses:</label><br>
+        <input type="text" id="plazo" name="plazo"><br><br>
+        <input type="submit" value="Calcular">
+    </form>
+
+
+?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $cedula = $_POST['cedula'];
+    $nombre = $_POST['nombre'];
+    $monto = $_POST['monto'];
+    $tasa = $_POST['tasa'] / 100;
+    $plazo = $_POST['plazo'];
+
+    // Calcular la cuota fija utilizando la fórmula del método francés
+    $cuota = ($monto * $tasa) / (1 - pow((1 + $tasa), -$plazo));
+
+    // Generar la tabla de amortización
+    echo "<h2>Tabla de Amortización</h2>";
+    echo "<table border='1'>";
+    echo "<tr><th>Mes</th><th>Cuota</th><th>Interés</th><th>Capital</th><th>Saldo</th></tr>";
+
+    $saldo = $monto;
+    for ($i = 1; $i <= $plazo; $i++) {
+        $interes = $saldo * $tasa;
+        $capital = $cuota - $interes;
+        $saldo = $saldo - $capital;
+        echo "<tr><td>$i</td><td>" . number_format($cuota, 2) . "</td><td>" . number_format($interes, 2) . "</td><td>" . number_format($capital, 2) . "</td><td>" . number_format($saldo, 2) . "</td></tr>";
+    }
+
+    echo "</table>";
+}
+?>
+</body>
+</html>
+
+
+
